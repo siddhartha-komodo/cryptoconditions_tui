@@ -16,7 +16,7 @@ I advice to read it before you start use this tool to understand the flow.
 To start use GatewaysCC TUI:
 
 0) `sudo apt-get install python3.6 && export PATH=$PATH:~/komodo/src` 
-1) `https://github.com/tonymorony/cryptoconditions_tui`
+1) `git clone https://github.com/tonymorony/cryptoconditions_tui`
 2) `cd cryptoconditions_tui`
 3) `./gateways_cc_cli.py`
 
