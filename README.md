@@ -1,6 +1,6 @@
 ![alt text](https://i.imgur.com/Wi6F8GZ.png)
 
-This program was created for demonstration and partial automation of Komodo GatewaysCC stack. (AssetsCC, OraclesCC, GatewaysCC, oraclesfeed dAPP)
+This program was created for demonstration and partial automation of Komodo GatewaysCC stack testing. (AssetsCC, OraclesCC, GatewaysCC, oraclesfeed dAPP)
 
 Python3 required for execution:
 `sudo apt-get install python3.6`
