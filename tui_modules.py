@@ -291,6 +291,11 @@ def gateways_claim(acname, bindtxid, coin, deposittxid, destpub, amount):
     gateways_claim_txid = json.loads(check_output(["komodo-cli","-ac_name="+acname,"gatewaysclaim", bindtxid, coin, deposittxid, destpub, amount]).decode().rstrip())
     return gateways_claim_txid
 
+def gateways_withdraw(acname,bindtxid,coin,withdrawpub,amount):
+    gateways_withdraw_txid = json.loads(check_output(["komodo-cli","-ac_name="+acname,"gatewayswithdraw", bindtxid, coin, withdrawpub, amount]).decode().rstrip())
+    return gateways_claim_txid
+
+
 def int_to_hex(input_filename):
     with open(input_filename, 'r') as file:
         data = file.readlines()

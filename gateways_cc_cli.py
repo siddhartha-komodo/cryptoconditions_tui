@@ -5,11 +5,13 @@ import readline
 import subprocess
 import signal
 import sys
+import time
 from subprocess import check_output
 from tui_modules import get_tokens_list, create_token, oracle_create,\
 oracle_register, oracle_subscribe, get_oracles_list, oracle_utxogen,\
 tokens_converter, tx_broadcaster, gateways_bind, z_sendmany_twoaddresses,\
-list_address_groupings, operationstatus_to_txid, gateways_deposit, gateways_claim\
+list_address_groupings, operationstatus_to_txid, gateways_deposit, gateways_claim,\
+gateways_withdraw
 
 header = "\
  _____       _                               _____  _____ \n\
@@ -96,6 +98,7 @@ def oracles_list_gw():
 
 def oracles_utxogen_gw():
     # to give user helpful info
+    print("List of oracles created by this tool on this instance: ")
     file01 = open("oracles_list", "r")
     for line in file01:
         print(line)
@@ -115,6 +118,7 @@ def oracles_utxogen_gw():
 
 def tokens_converter_gw():
     # to give user helpful info
+    print("List of tokens created by this tool on this instance: ")
     file00 = open("tokens_list", "r")
     for line in file00:
         print(line)
@@ -139,11 +143,13 @@ def tokens_converter_gw():
 
 def gateway_bind_gw():
     # to give user helpful info
+    print("List of tokens created by this tool on this instance: ")
     file00 = open("tokens_list", "r")
     for line in file00:
         print(line)
     file00.close()
     print("\n")
+    print("List of oracles created by this tool on this instance: ")
     file01 = open("oracles_list", "r")
     for line in file01:
         print(line)
@@ -224,9 +230,11 @@ def send_kmd_gw():
     #have to show here deposit addresses for gateways created by user
     amount2 = input("Input how many KMD you want to deposit on this gateway: ")
     operation = z_sendmany_twoaddresses(sendaddress, recepient1, amount1, recepient2, amount2)
+    print("Operation proceed! " + str(operation) + " Let's wait 30 seconds to get txid")
+    # trying to avoid pending status of operation
+    time.sleep(30)
     file.writelines(operationstatus_to_txid(operation) + "\n")
     file.close()
-    print("Operation proceed! " + str(operation))
     print(colorize("KMD Transaction ID: " + str(operationstatus_to_txid(operation)) + " Entry added to deposits_list file", "green"))
     input("Press [Enter] to continue...")
     # maybe have to save it in file
@@ -246,7 +254,7 @@ def gateways_claim_gw():
     amount = input("Input amount of yours claiming: ")
     claim_tx_hex = gateways_claim(ac_name, bindtxid, coin, deposittxid, destpub, amount)
     claim_tx_txid = tx_broadcaster(ac_name,claim_tx_hex["hex"])
-    print("Transaction succesfully claimed: " + claim_tx_id)
+    print("Transaction succesfully claimed: " + claim_tx_txid)
     input("Press [Enter] to continue...")
 
 def gateways_deposit_gw():
@@ -271,8 +279,16 @@ def gateways_deposit_gw():
     input("Press [Enter] to continue...")
 
 
-def tokens_witdrawal_gw():
-    print("You called bar()")
+def gateways_witdrawal_gw():
+    print("At first you need to convert tokens to pubkey from which you want to initiate withdrawal and wait for tx mining")
+    tokens_converter_gw()
+    print("Now gatewayswithdraw: ")
+    ac_name = str(input("Input AC name with which you want to work (exmp: ORCL1): "))
+    bindtxid = input("Input your gateway bind txid: ")
+    coin = input("Input your external coin ticker (e.g. KMD): ")
+    withdrawpub = input("Input pubkey on which you want to withdraw tokens: ")
+    amont = input("Input amount of tokens which you want to withdraw: ")    
+    gateways_withdraw(ac_name,bindtxid,coin,withdrawpub,amount)
     input("Press [Enter] to continue...")
 
 menuItems = [
@@ -288,9 +304,8 @@ menuItems = [
     { "Run oraclefeed dAPP - NOT WORK CORRECT NOW PLEASE RUN DAPP MANUALLY": oraclefeed_run_gw },
     { "Send KMD gateway deposit transaction": send_kmd_gw },
     { "Execute gateways deposit": gateways_deposit_gw },
-    # { "Claim gateways deposit": gateways_claim },
     { "Execute gateways claim": gateways_claim_gw },
-    { "Execute gateways withdrawal": tokens_witdrawal_gw },
+    { "Execute gateways withdrawal": gateways_witdrawal_gw },
     { "Exit": exit },
 ]
 
@@ -315,4 +330,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
