@@ -18,8 +18,10 @@ class bcolors:
 def tx_broadcaster(ac_name, hex):
     try:
         tx_id = check_output(["komodo-cli","-ac_name="+ac_name,"sendrawtransaction", hex]).decode().rstrip()
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, KeyError) as e:
         tx_id = "Error"
+        print("Something went wrong")
+        print(hex)
     return tx_id
 
 def get_tokens_list(ac_name):
@@ -323,3 +325,19 @@ def operationstatus_to_txid(zstatus):
 def list_address_groupings():
     address_list = json.loads(check_output(["komodo-cli","listaddressgroupings"]))
     print(address_list)
+
+def channel_open(acname, destpubkey, paymentsnumber, paymentdenomination):
+    try:
+        channel_open_hex = json.loads(check_output(["komodo-cli","-ac_name="+acname,"channelsopen", destpubkey, paymentsnumber, paymentdenomination]).decode().rstrip())
+    except FileNotFoundError as e:
+        print(e)
+        pass
+    return channel_open_hex
+
+def channel_payment(acname, opentxid, paymentamount):
+    try:
+        channel_payment_hex = json.loads(check_output(["komodo-cli","-ac_name="+acname,"channelspayment", opentxid, paymentamount]).decode().rstrip())
+    except FileNotFoundError as e:
+        print(e)
+        pass
+    return channel_payment_hex

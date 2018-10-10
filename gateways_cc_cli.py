@@ -268,9 +268,15 @@ def gateways_deposit_gw():
         destpub = input("Input pubkey which claim deposit: ")
         amount = input("Input amount of your deposit: ")
         deposit_raw = gateways_deposit(ac_name, bindtxid, coin, cointxid, destpub, amount)
-        deposit_txid = tx_broadcaster(ac_name,deposit_raw["hex"])
-        print(colorize("Deposit is successful! Deposit request txid: " + deposit_txid \
-         + " After gatewaysclaim node confirmation you will get the tokens", "green"))
+        try:
+            deposit_txid = tx_broadcaster(ac_name,bind_raw["hex"])
+        except KeyError:
+            print("Hex error! Result of gatewaysbind call:")
+            print(bind_hex)
+            input("Press [Enter] to continue...")
+        else:
+            print(colorize("Deposit is successful! Deposit request txid: " + deposit_txid \
+            + " After gatewaysclaim node confirmation you will get the tokens", "green"))
          #have to save it to file
     elif autodeposit_choice == 'n':
         pass
@@ -287,7 +293,7 @@ def gateways_witdrawal_gw():
     bindtxid = input("Input your gateway bind txid: ")
     coin = input("Input your external coin ticker (e.g. KMD): ")
     withdrawpub = input("Input pubkey on which you want to withdraw tokens: ")
-    amont = input("Input amount of tokens which you want to withdraw: ")    
+    amont = input("Input amount of tokens which you want to withdraw: ")
     gateways_withdraw(ac_name,bindtxid,coin,withdrawpub,amount)
     input("Press [Enter] to continue...")
 
