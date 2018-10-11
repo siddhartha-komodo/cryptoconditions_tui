@@ -341,3 +341,27 @@ def channel_payment(acname, opentxid, paymentamount):
         print(e)
         pass
     return channel_payment_hex
+
+def channel_close(acname, opentxid):
+    try:
+        channel_close_hex = json.loads(check_output(["komodo-cli","-ac_name="+acname,"channelsclose", opentxid]).decode().rstrip())
+    except FileNotFoundError as e:
+        print(e)
+        pass
+    return channel_close_hex
+
+def channel_refund(acname, opentxid, closetxid):
+    try:
+        channel_refund_hex = json.loads(check_output(["komodo-cli","-ac_name="+acname,"channelsrefund", opentxid, closetxid]).decode().rstrip())
+    except FileNotFoundError as e:
+        print(e)
+        pass
+    return channel_refund_hex
+
+def channels_info(acname):
+    try:
+        channels_info = json.loads(check_output(["komodo-cli","-ac_name="+acname,"channelsinfo"]).decode().rstrip())
+    except FileNotFoundError as e:
+        print(e)
+        pass
+    return channels_info

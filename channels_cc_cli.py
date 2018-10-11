@@ -5,7 +5,8 @@ import signal
 import readline
 import sys
 import subprocess
-from tui_modules import tx_broadcaster, channel_open, channel_payment
+from tui_modules import tx_broadcaster, channel_open, channel_payment,\
+channel_close, channel_refund, channels_info
 
 header = "\
  _____  _                                 _       _____  _____ \n\
@@ -65,7 +66,7 @@ def channel_payment_tui():
         print("\nLooks like you not created any channels yet\n")
         pass
 
-    opentxid = input("Input txid of channels opening: ")
+    opentxid = input("Input txid of channel opening: ")
     paymentamount = input("Input amount of yours payment: ")
 
     try:
@@ -86,15 +87,53 @@ def channel_payment_tui():
             input("Press [Enter] to continue...")
 
 def channel_close_tui():
-    print("Hello world!")
-    input("Press [Enter] to continue...")
+    acname = str(input("Input AC name with which you want to work (exmp: ORCL1): "))
+    opentxid = input("Input txid of channel opening: ")
+#print list of opened
+    try:
+        channel_close_hex = channel_close(acname, opentxid)
+    except subprocess.CalledProcessError as e:
+        print("Something went wrong...")
+        print(e)
+        input("Press [Enter] to continue...")
+    else:
+        try:
+            channel_close_txid = tx_broadcaster(acname, channel_close_hex["hex"])
+        except KeyError as e:
+            print("No hex for broadcasting.")
+            print(channel_close_hex)
+            input("Press [Enter] to continue...")
+        else:
+            print(colorize("Channel closing transaction succesfully broadcasted: " + channel_close_txid, "green"))
+            #save closing txid to file?
+            input("Press [Enter] to continue...")
 
 def channel_refund_tui():
-    print("Hello world!")
-    input("Press [Enter] to continue...")
+    acname = str(input("Input AC name with which you want to work (exmp: ORCL1): "))
+    #print list of opentxid and closetxid
+    opentxid = input("Input txid of channel opening: ")
+    closetxid = input("Input txid of channel closing: ")
+
+    try:
+        channel_refund_hex = channel_refund(acname, opentxid, closetxid)
+    except subprocess.CalledProcessError as e:
+        print("Something went wrong...")
+        print(e)
+        input("Press [Enter] to continue...")
+    else:
+        try:
+            channel_refund_txid = tx_broadcaster(acname, channel_refund_hex["hex"])
+        except KeyError as e:
+            print("No hex for broadcasting.")
+            print(channel_refund_hex)
+            input("Press [Enter] to continue...")
+        else:
+            print(colorize("Channel refund transaction succesfully broadcasted: " + channel_refund_txid, "green"))
+            input("Press [Enter] to continue...")
 
 def channels_list_tui():
-    print("Hello world!")
+    acname = str(input("Input AC name with which you want to work (exmp: ORCL1): "))
+    print(channels_info(acname))
     input("Press [Enter] to continue...")
 
 menuItems = [
